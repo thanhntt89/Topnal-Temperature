@@ -1,0 +1,54 @@
+﻿ // TOKEN発行
+        public static string GetToken()
+        {
+            // 初期処理
+            Init();
+
+            // 現在時刻
+            DateTime dt = DateUtil.NowJst();
+            string now = dt.ToString("yyyy/MM/dd HH:mm:ss.fff");
+
+
+
+            // 暗号化対象テキスト
+            string text = API_KEY + now;
+
+            // code1(公開鍵で暗号化)
+            string c1 = Encrypt(text, PUBLIC_KEY, true);
+
+
+            // code2(秘密鍵で暗号化)
+            string c2 = Encrypt(c1, PRIVATE_KEY, false);
+
+            LambdaLogger.Log("********c1=" + c1 + "\n");
+            LambdaLogger.Log("********c2=" + c2 + "\n");
+
+        }
+
+
+
+        private static void Init()
+        {
+            // **** 環境判定 ****
+            if (EmvironmentContext.ENVIRONMENT_MODE == EmvironmentContext.RELEASE)
+            {
+                //************************* Release *************************
+                // 電子署名用公開鍵
+                PUBLIC_KEY = EmvironmentContext.PUBLIC_KEY_RELEASE;
+                // 暗号化用秘密鍵
+                PRIVATE_KEY = EmvironmentContext.PRIVATE_KEY_RELEASE;
+                // APIキー
+                API_KEY = EmvironmentContext.API_KEY_RELEASE;
+
+            }
+            else
+            {
+                //************************* Dev *************************
+                // 電子署名用公開鍵
+                PUBLIC_KEY = EmvironmentContext.PUBLIC_KEY_DEV;
+                // 暗号化用秘密鍵
+                PRIVATE_KEY = EmvironmentContext.PRIVATE_KEY_DEV;
+                // APIキー
+                API_KEY = EmvironmentContext.API_KEY_DEV;
+            }
+        }

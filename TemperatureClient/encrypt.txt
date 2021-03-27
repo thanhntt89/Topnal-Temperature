@@ -1,0 +1,641 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Text;
+using System.IO;
+using System.Security.Cryptography;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
+using Amazon.Lambda.Core;
+using Period.Repository;
+using Period.Models;
+using Period.Context;
+using Period.Exceptions;
+
+namespace Period.Utils
+{
+    class PdsUtil
+    {
+
+        // **************************************************
+        // 公開鍵
+        private static string PUBLIC_KEY;
+        // 秘密鍵
+        private static string PRIVATE_KEY;
+        // APIキー
+        private static string API_KEY;
+
+        // PDS URL
+        private static string PDS_URL;
+
+        // Company ID
+        private static string COMPANY_ID;
+        // Group ID
+        private static string GROUP_ID;
+        // **************************************************
+
+        // 初期処理　環境による定数をセット
+        private static void Init()
+        {
+            // **** 環境判定 ****
+            if (EmvironmentContext.ENVIRONMENT_MODE == EmvironmentContext.RELEASE)
+            {
+                //************************* Release *************************
+                // 公開鍵
+                PUBLIC_KEY = EmvironmentContext.PDS_PUBLIC_KEY_RELEASE;
+                // 秘密鍵
+                PRIVATE_KEY = EmvironmentContext.PDS_PRIVATE_KEY_RELEASE;
+                // APIキー
+                API_KEY = EmvironmentContext.PDS_API_KEY_RELEASE;
+
+                // PDS URL
+                PDS_URL = EmvironmentContext.PDS_URL_RELEASE;
+
+                // Company ID
+                COMPANY_ID = EmvironmentContext.PDS_COMPANY_ID_RELEASE;
+                // Group ID
+                GROUP_ID = EmvironmentContext.PDS_GROUP_ID_RELEASE;
+
+            }
+            else
+            {
+                //************************* Dev *************************
+                // 公開鍵
+                PUBLIC_KEY = EmvironmentContext.PDS_PUBLIC_KEY_DEV;
+                // 秘密鍵
+                PRIVATE_KEY = EmvironmentContext.PDS_PRIVATE_KEY_DEV;
+                // APIキー
+                API_KEY = EmvironmentContext.PDS_API_KEY_DEV;
+
+                // PDS URL
+                PDS_URL = EmvironmentContext.PDS_URL_DEV;
+
+                // Company ID
+                COMPANY_ID = EmvironmentContext.PDS_COMPANY_ID_DEV;
+                // Group ID
+                GROUP_ID = EmvironmentContext.PDS_GROUP_ID_DEV;
+            }
+        }
+
+
+        // TOKEN発行
+        public static string GetToken()
+        {
+            // 初期処理
+            Init();
+
+            // 現在時刻
+            DateTime dt = DateUtil.NowJst();
+            string now = dt.ToString("yyyy/MM/dd HH:mm:ss.fff");
+
+
+
+            // 暗号化対象テキスト
+            string text = API_KEY + now;
+
+            // code1(公開鍵で暗号化)
+            string c1 = Encrypt(text, PUBLIC_KEY, true);
+
+
+            // code2(秘密鍵で暗号化)
+            string c2 = Encrypt(c1, PRIVATE_KEY, false);
+
+            LambdaLogger.Log("********c1=" + c1 + "\n");
+            LambdaLogger.Log("********c2=" + c2 + "\n");
+
+
+            // ***********************:
+            string apiUrl = PDS_URL + "/certificate";
+
+            // データの作成
+            var code = new TokenCode()
+            {
+                Code1 = c1,
+                Code2 = c2,
+            };
+
+            string jsonStr = null;
+
+            using (var ms = new MemoryStream())
+            using (var sr = new StreamReader(ms))
+            {
+                var serializer = new DataContractJsonSerializer(typeof(TokenCode));
+                serializer.WriteObject(ms, code);
+                ms.Position = 0;
+
+                jsonStr = sr.ReadToEnd();
+
+            }
+
+
+            
+            RequestResult result = PdsResponse("POST", apiUrl, now, $"{jsonStr}", null);
+            if (result.Status == "NG")
+            {
+                throw new PdsException();
+            }
+
+            return result.Token;
+
+
+        }
+
+
+        // 登録
+        public static void AddData(User user, string data)
+        {
+            // 初期処理
+            Init();
+            
+            // Token発行
+            string token = GetToken();
+
+            // 現在時刻
+            DateTime dt = DateTime.Now;
+            string now = dt.ToString("yyyy/MM/dd HH:mm:ss.fff");
+
+            
+            var id = user.UserId;
+
+
+            
+            string apiUrl = PDS_URL + "/transaction";
+
+            // データの作成
+            var infoObj = new AddDataInfoObj()
+            {
+                SaveDate = now,
+                UserId = id,
+                Data = data
+            };
+
+            var obj = new AddDataObj()
+            {
+                TId = id,
+                Info = infoObj,
+            };
+
+            string jsonStr = null;
+
+            using (var ms = new MemoryStream())
+            using (var sr = new StreamReader(ms))
+            {
+                var serializer = new DataContractJsonSerializer(typeof(AddDataObj));
+                serializer.WriteObject(ms, obj);
+                ms.Position = 0;
+
+                jsonStr = sr.ReadToEnd();
+
+            }
+
+            RequestResult result = PdsResponse("POST", apiUrl, now, $"{jsonStr}", token);
+            if (result.Status == "NG")
+            {
+                throw new PdsException();
+            }
+
+        }
+
+
+        // 更新
+        public static void UpdData(User user, string data)
+        {
+            // 初期処理
+            Init();
+
+            // Token発行
+            string token = GetToken();
+
+            // 現在時刻
+            DateTime dt = DateTime.Now;
+            string now = dt.ToString("yyyy/MM/dd HH:mm:ss.fff");
+
+            int id = user.UserId;
+
+
+
+            // ***********************:
+            string apiUrl = PDS_URL + "/transaction";
+
+            // データの作成
+            var infoObj = new AddDataInfoObj()
+            {
+                SaveDate = now,
+                UserId = id,
+                Data = data
+            };
+
+            var obj = new AddDataObj()
+            {
+                TId = id,
+                Info = infoObj,
+            };
+
+            string jsonStr = null;
+
+            using (var ms = new MemoryStream())
+            using (var sr = new StreamReader(ms))
+            {
+                var serializer = new DataContractJsonSerializer(typeof(AddDataObj));
+                serializer.WriteObject(ms, obj);
+                ms.Position = 0;
+
+                jsonStr = sr.ReadToEnd();
+
+            }
+
+            RequestResult result = PdsResponse("PUT", apiUrl, now, $"{jsonStr}", token);
+            if (result.Status == "NG")
+            {
+                throw new PdsException();
+            }
+
+        }
+
+
+
+        // 取得
+        public static string GetData(User user)
+        {
+            // 初期処理
+            Init();
+
+            // Token発行
+            string token = GetToken();
+            LambdaLogger.Log("*******************************token=" + token + "\n");
+
+
+
+
+            // 現在時刻
+            DateTime dt = DateUtil.NowJst();
+            string now = dt.ToString("yyyy/MM/dd HH:mm:ss.fff");
+
+
+
+            // ***********************:
+            string apiUrl = PDS_URL + "/transaction?tid=" + user.UserId;
+
+            RequestResult result = null;
+            result = PdsResponse("GET", apiUrl, now, null, token);
+
+            if (result.Status == "NG")
+            {
+                LambdaLogger.Log("*******************************PDS導入前ユーザー\n");
+
+
+                // 基本的にPDS導入前ユーザーのはず
+                // 会員登録
+                string pdsData = user.Pds;
+                LambdaLogger.Log("data:" + pdsData + "\n");
+                string[] arr = pdsData.Split(',');
+
+                // PDSへ情報更新
+                StringBuilder sb = new StringBuilder();
+                sb.Append(arr[0]);  // UserName
+                sb.Append(",");
+                sb.Append(arr[1]);  // Email
+                sb.Append(",");
+                sb.Append(arr[2]);  // PostNo
+                sb.Append(",");
+                sb.Append(arr[3]);  // Birth
+                sb.Append(",");
+                sb.Append(arr[4]);  // Height
+                sb.Append(",");
+                sb.Append(arr[5]);  // Weight
+
+                AddData(user, sb.ToString());
+
+                return sb.ToString();
+            }
+
+            return result.TransactionInfoData.Data;
+
+        }
+
+        // 削除
+        public static string DeleteData(User user)
+        {
+            // 初期処理
+            Init();
+
+            // Token発行
+            string token = GetToken();
+            LambdaLogger.Log("*******************************token=" + token + "\n");
+
+
+
+
+            // 現在時刻
+            DateTime dt = DateUtil.NowJst();
+            string now = dt.ToString("yyyy/MM/dd HH:mm:ss.fff");
+
+
+
+            // ***********************:
+            string apiUrl = PDS_URL + "/transaction?tid=" + user.UserId;
+
+            LambdaLogger.Log("*******************************apiUrl=" + apiUrl + "\n");
+
+            RequestResult result = null;
+            result = PdsResponse("DELETE", apiUrl, now, null, token);
+
+            LambdaLogger.Log("*******************************aaaaaa\n");
+            if (result == null || result.Status == "NG")
+            {
+                LambdaLogger.Log("*******************************bbbbbbb\n");
+                LambdaLogger.Log("*******************************削除済みユーザー：userid=" + user.UserId + "\n");
+                return null;
+            }
+
+            return result.TransactionInfoData.Data;
+
+        }
+
+
+        // PDS接続共通処理
+        private static RequestResult PdsResponse(string method, string apiUrl, string timestamp, string jsonParameter, string token)
+        {
+            try
+            {
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
+                request.ContentType = "application/json";
+                request.Method = method;
+                // カスタムヘッダー
+                request.Headers.Add("CompanyID", COMPANY_ID);
+                request.Headers.Add("GroupID", GROUP_ID);
+                request.Headers.Add("TimeStamp", timestamp);
+                if (token != null)
+                {
+                    request.Headers.Add("Token", token);
+                }
+
+
+                if (jsonParameter != null)
+                {
+                    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                    {
+                        streamWriter.Write(jsonParameter);
+                    }
+                }
+                
+                var httpResponse = (HttpWebResponse)request.GetResponse();
+                
+                // HttpStatusCodeの判断
+                if (httpResponse.StatusCode != HttpStatusCode.OK)
+                {
+                    throw new PdsException();
+                }
+
+                RequestResult result;
+                using (httpResponse)
+                {
+                    using (var resStream = httpResponse.GetResponseStream())
+                    {
+                        
+                        var serializer = new DataContractJsonSerializer(typeof(RequestResult));
+                        
+                        result = (RequestResult)serializer.ReadObject(resStream);
+                        
+                    }
+                    return result;
+                }
+
+
+            }
+            catch (WebException wex)
+            {
+                throw new PdsException();
+            }
+        }
+
+        
+
+
+
+        /// <summary>
+        /// 公開鍵暗号で文字列を暗号化する
+        /// </summary>
+        /// <param name="text">平文の文字列</param>
+        /// <param name="key">鍵</param>
+        /// <returns>暗号化された文字列</returns>
+        private static string Encrypt(string text, string key, Boolean isPublicKey)
+        {
+
+            byte[] data = Encoding.UTF8.GetBytes(text);
+            byte[] der = Convert.FromBase64String(key);
+
+            if (isPublicKey)
+            {
+                RSAParameters parameters = CreatePublicParameter(der);
+
+                var provider = new RSACryptoServiceProvider();
+                provider.ImportParameters(parameters);
+                data = provider.Encrypt(data, true);
+            }
+            else
+            {
+                RSAParameters parameters = CreatePrivateParameter(der);
+
+                var provider = new RSACryptoServiceProvider();
+                provider.ImportParameters(parameters);
+
+
+                //メッセージをバイト型配列にして、SHA1ハッシュ値を計算
+                SHA256Managed sha = new SHA256Managed();
+                byte[] hashData = sha.ComputeHash(data);
+
+
+                //RSAPKCS1SignatureFormatterオブジェクトを作成
+                RSAPKCS1SignatureFormatter rsaFormatter = new RSAPKCS1SignatureFormatter(provider);
+                //署名の作成に使用するハッシュアルゴリズムを指定
+                rsaFormatter.SetHashAlgorithm("SHA256");
+
+                //署名を作成
+                data = rsaFormatter.CreateSignature(hashData);
+
+            }
+
+
+            //バイト型配列を文字列に変換して返す
+            return Convert.ToBase64String(data);
+
+
+        }
+
+
+        // 公開鍵クラスを生成
+        private static RSAParameters CreatePublicParameter(byte[] der)
+        {
+            byte[] sequence1 = null;
+            using (var reader = new BinaryReader(new MemoryStream(der)))
+            {
+                sequence1 = Read(reader);
+            }
+
+            byte[] sequence2 = null;
+            using (var reader = new BinaryReader(new MemoryStream(sequence1)))
+            {
+                Read(reader); // sequence
+                sequence2 = Read(reader); // bit string
+            }
+
+            byte[] sequence3 = null;
+            using (var reader = new BinaryReader(new MemoryStream(sequence2)))
+            {
+                sequence3 = Read(reader); // sequence
+            }
+
+            var parameters = new RSAParameters();
+            using (var reader = new BinaryReader(new MemoryStream(sequence3)))
+            {
+                parameters.Modulus = Read(reader); // モジュラス
+                parameters.Exponent = Read(reader); // 公開指数
+            }
+
+            return parameters;
+        }
+
+
+        // 秘密鍵クラスを生成
+        private static RSAParameters CreatePrivateParameter(byte[] der)
+        {
+            byte[] sequence = null;
+            using (var reader = new BinaryReader(new MemoryStream(der)))
+            {
+                sequence = Read(reader);
+            }
+
+            var parameters = new RSAParameters();
+            using (var reader = new BinaryReader(new MemoryStream(sequence)))
+            {
+                Read(reader); // version
+                parameters.Modulus = Read(reader);
+                parameters.Exponent = Read(reader);
+                parameters.D = Read(reader);
+                parameters.P = Read(reader);
+                parameters.Q = Read(reader);
+                parameters.DP = Read(reader);
+                parameters.DQ = Read(reader);
+                parameters.InverseQ = Read(reader);
+            }
+            return parameters;
+        }
+
+        // バイト読み込み
+        private static byte[] Read(BinaryReader reader)
+        {
+            // tag
+            reader.ReadByte();
+
+            // length
+            int length = 0;
+            byte b = reader.ReadByte();
+            if ((b & 0x80) == 0x80) // length が128 octet以上
+            {
+                int n = b & 0x7F;
+                byte[] buf = new byte[] { 0x00, 0x00, 0x00, 0x00 };
+                for (var i = n - 1; i >= 0; --i)
+                    buf[i] = reader.ReadByte();
+                length = BitConverter.ToInt32(buf, 0);
+            }
+            else // length が 127 octet以下
+            {
+                length = b;
+            }
+
+            // value
+            if (length == 0)
+                return new byte[0];
+            byte first = reader.ReadByte();
+            if (first == 0x00) length -= 1; // 最上位byteが0x00の場合は、除いておく
+            else reader.BaseStream.Seek(-1, SeekOrigin.Current); // 1byte 読んじゃったので、streamの位置を戻しておく
+            return reader.ReadBytes(length);
+        }
+
+
+        /// <summary>
+        /// JSON オブジェクトへシリアライズ
+        /// </summary>
+        private string Serialize(object graph)
+        {
+            using (var stream = new MemoryStream())
+            {
+                var serializer = new DataContractJsonSerializer(graph.GetType());
+                serializer.WriteObject(stream, graph);
+                return Encoding.UTF8.GetString(stream.ToArray());
+            }
+        }
+
+        [DataContract]
+        // TOKEN発行用JSON
+        private class TokenCode
+        {
+            [DataMember(Name = "code1")]
+            public string Code1 { get; set; }
+            [DataMember(Name = "code2")]
+            public string Code2 { get; set; }
+        }
+
+        [DataContract]
+        // データ登録用JSON
+        private class AddDataObj
+        {
+            [DataMember(Name = "tid")]
+            public int TId{ get; set; }
+            [DataMember(Name = "Info")]
+            public AddDataInfoObj Info { get; set; }
+        }
+
+        [DataContract]
+        // データ登録用JSON
+        private class AddDataInfoObj
+        {
+            [DataMember(Name = "save_date")]
+            public string SaveDate { get; set; }
+            [DataMember(Name = "user_id")]
+            public int UserId { get; set; }
+            [DataMember(Name = "data")]
+            public string Data { get; set; }
+        }
+
+
+        
+
+
+        [DataContract]
+        public class RequestResult
+        {
+            [DataMember]
+            public string Status { get; set; }
+            [DataMember]
+            public List<ErrorInfo> ErrorInfos { get; set; }
+            [DataMember]
+            public string Token { get; set; }
+            [DataMember(Name = "TransactionInfo")]
+            public TransactionInfo TransactionInfoData { get; set; }
+
+
+            [DataContract]
+            public class ErrorInfo
+            {
+                [DataMember]
+                public string ErrorCode { get; set; }
+                [DataMember]
+                public string Message { get; set; }
+            }
+
+            [DataContract]
+            public class TransactionInfo
+            {
+                [DataMember(Name = "data")]
+                public string Data { get; set; }
+            }
+        }
+
+
+
+
+    }
+}

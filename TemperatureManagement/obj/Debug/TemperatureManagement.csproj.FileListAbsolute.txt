@@ -1,0 +1,51 @@
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\TemperatureManagement.exe.config
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\TemperatureManagement.exe
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\TemperatureManagement.pdb
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\ChoETL.dll
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\Newtonsoft.Json.dll
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\TemperatureApiClient.dll
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\TemperatureModels.dll
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\TemperatureApiClient.pdb
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\TemperatureApiClient.dll.config
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\TemperatureModels.pdb
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\bin\Debug\Newtonsoft.Json.xml
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.csprojAssemblyReference.cache
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.Properties.Resources.resources
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.TemperatureMain.resources
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.UCPaging.resources
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.Clients.UCClients.resources
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.Users.Login.resources
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.Users.UCUserList.resources
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.Users.ChangePassword.resources
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.csproj.GenerateResource.cache
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.csproj.CoreCompileInputs.cache
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.csproj.CopyComplete
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.exe
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\obj\Debug\TemperatureManagement.pdb
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TemperatureManagement.exe.config
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TemperatureManagement.exe
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TemperatureManagement.pdb
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\ChoETL.dll
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\Newtonsoft.Json.dll
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TemperatureApiClient.dll
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TemperatureModels.dll
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TemperatureApiClient.pdb
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TemperatureApiClient.dll.config
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TemperatureModels.pdb
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\Newtonsoft.Json.xml
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.csprojAssemblyReference.cache
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.Properties.Resources.resources
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.TemperatureMain.resources
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.UCPaging.resources
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.Clients.UCClients.resources
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.Users.Login.resources
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.Users.UCUserList.resources
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.Users.ChangePassword.resources
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.csproj.GenerateResource.cache
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.csproj.CoreCompileInputs.cache
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.csproj.CopyComplete
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.exe
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.pdb
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\obj\Debug\TemperatureManagement.Users.AddUser.resources
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TimeZoneConverter.dll
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\bin\Debug\TimeZoneConverter.xml

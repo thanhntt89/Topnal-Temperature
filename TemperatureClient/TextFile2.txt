@@ -1,0 +1,303 @@
+﻿Path file: watashino-ondo\Utils\PdsUtil.cs
+
+
+ // TOKEN発行
+public static string GetToken()
+{
+    // 初期処理
+    Init();
+
+    // 現在時刻
+    DateTime dt = DateUtil.NowJst();
+    string now = dt.ToString("yyyy/MM/dd HH:mm:ss.fff");
+
+
+
+    // 暗号化対象テキスト
+    string text = API_KEY + now;
+
+    // code1(公開鍵で暗号化)
+    string c1 = Encrypt(text, PUBLIC_KEY, true);
+
+
+    // code2(秘密鍵で暗号化)
+    string c2 = Encrypt(c1, PRIVATE_KEY, false);
+
+    LambdaLogger.Log("********c1=" + c1 + "\n");
+    LambdaLogger.Log("********c2=" + c2 + "\n");
+
+
+    // ***********************:
+    string apiUrl = PDS_URL + "/certificate";
+
+    // データの作成
+    var code = new TokenCode()
+    {
+        Code1 = c1,
+        Code2 = c2,
+    };
+
+    string jsonStr = null;
+
+    using (var ms = new MemoryStream())
+    using (var sr = new StreamReader(ms))
+    {
+        var serializer = new DataContractJsonSerializer(typeof(TokenCode));
+        serializer.WriteObject(ms, code);
+        ms.Position = 0;
+
+        jsonStr = sr.ReadToEnd();
+
+    }
+
+
+            
+    RequestResult result = PdsResponse("POST", apiUrl, now, $"{jsonStr}", null);
+    if (result.Status == "NG")
+    {
+        throw new PdsException();
+    }
+
+    return result.Token;
+
+
+}
+
+/// <summary>
+/// 公開鍵暗号で文字列を暗号化する
+/// </summary>
+/// <param name="text">平文の文字列</param>
+/// <param name="key">鍵</param>
+/// <returns>暗号化された文字列</returns>
+private static string Encrypt(string text, string key, Boolean isPublicKey)
+{
+
+    byte[] data = Encoding.UTF8.GetBytes(text);
+    byte[] der = Convert.FromBase64String(key);
+
+    if (isPublicKey)
+    {
+        RSAParameters parameters = CreatePublicParameter(der);
+
+        var provider = new RSACryptoServiceProvider();
+        provider.ImportParameters(parameters);
+        data = provider.Encrypt(data, true);
+    }
+    else
+    {
+        RSAParameters parameters = CreatePrivateParameter(der);
+
+        var provider = new RSACryptoServiceProvider();
+        provider.ImportParameters(parameters);
+
+
+        //メッセージをバイト型配列にして、SHA1ハッシュ値を計算
+        SHA256Managed sha = new SHA256Managed();
+        byte[] hashData = sha.ComputeHash(data);
+
+
+        //RSAPKCS1SignatureFormatterオブジェクトを作成
+        RSAPKCS1SignatureFormatter rsaFormatter = new RSAPKCS1SignatureFormatter(provider);
+        //署名の作成に使用するハッシュアルゴリズムを指定
+        rsaFormatter.SetHashAlgorithm("SHA256");
+
+        //署名を作成
+        data = rsaFormatter.CreateSignature(hashData);
+
+    }
+
+
+    //バイト型配列を文字列に変換して返す
+    return Convert.ToBase64String(data);
+
+
+}
+
+
+// 公開鍵クラスを生成
+private static RSAParameters CreatePublicParameter(byte[] der)
+{
+    byte[] sequence1 = null;
+    using (var reader = new BinaryReader(new MemoryStream(der)))
+    {
+        sequence1 = Read(reader);
+    }
+
+    byte[] sequence2 = null;
+    using (var reader = new BinaryReader(new MemoryStream(sequence1)))
+    {
+        Read(reader); // sequence
+        sequence2 = Read(reader); // bit string
+    }
+
+    byte[] sequence3 = null;
+    using (var reader = new BinaryReader(new MemoryStream(sequence2)))
+    {
+        sequence3 = Read(reader); // sequence
+    }
+
+    var parameters = new RSAParameters();
+    using (var reader = new BinaryReader(new MemoryStream(sequence3)))
+    {
+        parameters.Modulus = Read(reader); // モジュラス
+        parameters.Exponent = Read(reader); // 公開指数
+    }
+
+    return parameters;
+}
+
+
+// 秘密鍵クラスを生成
+private static RSAParameters CreatePrivateParameter(byte[] der)
+{
+    byte[] sequence = null;
+    using (var reader = new BinaryReader(new MemoryStream(der)))
+    {
+        sequence = Read(reader);
+    }
+
+    var parameters = new RSAParameters();
+    using (var reader = new BinaryReader(new MemoryStream(sequence)))
+    {
+        Read(reader); // version
+        parameters.Modulus = Read(reader);
+        parameters.Exponent = Read(reader);
+        parameters.D = Read(reader);
+        parameters.P = Read(reader);
+        parameters.Q = Read(reader);
+        parameters.DP = Read(reader);
+        parameters.DQ = Read(reader);
+        parameters.InverseQ = Read(reader);
+    }
+    return parameters;
+}
+
+
+// PDS接続共通処理
+private static RequestResult PdsResponse(string method, string apiUrl, string timestamp, string jsonParameter, string token)
+{
+    try
+    {
+
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
+        request.ContentType = "application/json";
+        request.Method = method;
+        // カスタムヘッダー
+        request.Headers.Add("CompanyID", COMPANY_ID);
+        request.Headers.Add("GroupID", GROUP_ID);
+        request.Headers.Add("TimeStamp", timestamp);
+        if (token != null)
+        {
+            request.Headers.Add("Token", token);
+        }
+
+
+        if (jsonParameter != null)
+        {
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                streamWriter.Write(jsonParameter);
+            }
+        }
+                
+        var httpResponse = (HttpWebResponse)request.GetResponse();
+                
+        // HttpStatusCodeの判断
+        if (httpResponse.StatusCode != HttpStatusCode.OK)
+        {
+            throw new PdsException();
+        }
+
+        RequestResult result;
+        using (httpResponse)
+        {
+            using (var resStream = httpResponse.GetResponseStream())
+            {
+                        
+                var serializer = new DataContractJsonSerializer(typeof(RequestResult));
+                        
+                result = (RequestResult)serializer.ReadObject(resStream);
+                        
+            }
+            return result;
+        }
+
+
+    }
+    catch (WebException wex)
+    {
+        throw new PdsException();
+    }
+}
+
+
+
+
+
+
+
+ [DataContract]
+// TOKEN発行用JSON
+private class TokenCode
+{
+    [DataMember(Name = "code1")]
+    public string Code1 { get; set; }
+    [DataMember(Name = "code2")]
+    public string Code2 { get; set; }
+}
+
+[DataContract]
+// データ登録用JSON
+private class AddDataObj
+{
+    [DataMember(Name = "tid")]
+    public int TId{ get; set; }
+    [DataMember(Name = "Info")]
+    public AddDataInfoObj Info { get; set; }
+}
+
+[DataContract]
+// データ登録用JSON
+private class AddDataInfoObj
+{
+    [DataMember(Name = "save_date")]
+    public string SaveDate { get; set; }
+    [DataMember(Name = "user_id")]
+    public int UserId { get; set; }
+    [DataMember(Name = "data")]
+    public string Data { get; set; }
+}
+
+
+        
+
+
+[DataContract]
+public class RequestResult
+{
+    [DataMember]
+    public string Status { get; set; }
+    [DataMember]
+    public List<ErrorInfo> ErrorInfos { get; set; }
+    [DataMember]
+    public string Token { get; set; }
+    [DataMember(Name = "TransactionInfo")]
+    public TransactionInfo TransactionInfoData { get; set; }
+
+
+    [DataContract]
+    public class ErrorInfo
+    {
+        [DataMember]
+        public string ErrorCode { get; set; }
+        [DataMember]
+        public string Message { get; set; }
+    }
+
+    [DataContract]
+    public class TransactionInfo
+    {
+        [DataMember(Name = "data")]
+        public string Data { get; set; }
+    }
+}

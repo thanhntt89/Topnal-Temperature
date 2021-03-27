@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperatureManagement", "TemperatureManagement.csproj", "{F5EF12EA-E3AC-4249-8401-CC02B7A6BE62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperatureModels", "TemperatureModels\TemperatureModels.csproj", "{C9405BE1-297A-4F4D-9C2C-8FDB4FC2210E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperatureApiClient", "..\TemperatureClient\TemperatureApiClient.csproj", "{FA435D0B-07A6-4E92-900B-164F64EB920F}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TeamperatureSetup", "..\TeamperatureSetup\TeamperatureSetup.vdproj", "{0831CFF8-4D9F-4E8F-BAF7-9CB54EFB5D43}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5EF12EA-E3AC-4249-8401-CC02B7A6BE62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5EF12EA-E3AC-4249-8401-CC02B7A6BE62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5EF12EA-E3AC-4249-8401-CC02B7A6BE62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5EF12EA-E3AC-4249-8401-CC02B7A6BE62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9405BE1-297A-4F4D-9C2C-8FDB4FC2210E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9405BE1-297A-4F4D-9C2C-8FDB4FC2210E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9405BE1-297A-4F4D-9C2C-8FDB4FC2210E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9405BE1-297A-4F4D-9C2C-8FDB4FC2210E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA435D0B-07A6-4E92-900B-164F64EB920F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA435D0B-07A6-4E92-900B-164F64EB920F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA435D0B-07A6-4E92-900B-164F64EB920F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA435D0B-07A6-4E92-900B-164F64EB920F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0831CFF8-4D9F-4E8F-BAF7-9CB54EFB5D43}.Debug|Any CPU.ActiveCfg = Debug
+		{0831CFF8-4D9F-4E8F-BAF7-9CB54EFB5D43}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {14D14589-6764-4DA7-A4B4-F0C5582B1D93}
+	EndGlobalSection
+EndGlobal

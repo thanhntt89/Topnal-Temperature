@@ -1,0 +1,17 @@
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.csproj.CoreCompileInputs.cache
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\bin\Debug\TemperatureModels.dll
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\bin\Debug\TemperatureModels.pdb
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\bin\Debug\Newtonsoft.Json.dll
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\bin\Debug\Newtonsoft.Json.xml
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.csprojAssemblyReference.cache
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.csproj.CopyComplete
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.dll
+C:\Users\TOPPAN\Desktop\RT project\watashinoondoadmin\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.pdb
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\TemperatureModels\bin\Debug\TemperatureModels.dll
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\TemperatureModels\bin\Debug\TemperatureModels.pdb
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\TemperatureModels\bin\Debug\Newtonsoft.Json.dll
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\TemperatureModels\bin\Debug\Newtonsoft.Json.xml
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.csproj.CoreCompileInputs.cache
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.csproj.CopyComplete
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.dll
+E:\Jimmii\Projects\2020\Topnal\Temperature\TemperatureManagement\TemperatureModels\obj\Debug\TemperatureModels.pdb
